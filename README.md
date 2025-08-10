@@ -43,3 +43,20 @@ my-repo/
 ├── src/
 ├── package.json
 └── ...
+name: Check README Location
+
+on: [push, pull_request]
+
+jobs:
+  check-readme:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Ensure README is only at root
+      run: |
+        misplaced=$(find . -type f -iname 'readme.md' ! -path './README.md')
+        if [[ -n "$misplaced" ]]; then
+          echo "README.md found in subfolder(s):"
+          echo "$misplaced"
+          exit 1
+        fi
